@@ -434,6 +434,88 @@
     text-decoration: none;
   }
 
+  /* ---- Quick-apply helper ---- */
+  .helper {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 22px 24px;
+    margin-bottom: 36px;
+  }
+  .helper-note {
+    font-size: 13px;
+    color: var(--text-dim);
+    line-height: 1.6;
+    margin: 0 0 18px;
+    max-width: 720px;
+  }
+  .helper-row {
+    display: grid;
+    grid-template-columns: 1.3fr 1fr;
+    gap: 24px;
+  }
+  .helper-col { display: flex; flex-direction: column; }
+  .helper-label {
+    font-size: 11.5px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 8px;
+  }
+  .pitch-box {
+    width: 100%;
+    min-height: 110px;
+    resize: vertical;
+    font-family: var(--sans);
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--text);
+    background: var(--surface-raised);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 12px 14px;
+    margin-bottom: 10px;
+  }
+  .copy-btn {
+    align-self: flex-start;
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--accent);
+    background: var(--accent-soft);
+    border: 1px solid transparent;
+    padding: 7px 14px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+  }
+  .copy-btn:hover { opacity: 0.85; }
+  .bookmarklet-btn {
+    align-self: flex-start;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--mono);
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--accent-ink);
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    padding: 10px 18px;
+    border-radius: var(--radius-sm);
+    text-decoration: none;
+    box-shadow: 0 4px 14px color-mix(in srgb, var(--accent) 35%, transparent);
+    cursor: grab;
+    margin-bottom: 10px;
+  }
+  .helper-hint {
+    font-size: 12px;
+    color: var(--text-faint);
+    line-height: 1.5;
+    margin: 0;
+  }
+  @media (max-width: 680px) {
+    .helper-row { grid-template-columns: 1fr; }
+  }
+
   /* ---- Config footer ---- */
   .configbar {
     margin-top: 40px;
@@ -752,6 +834,28 @@
       </div>
     </details>
 
+  </div>
+
+  <div class="section-label">Quick-apply helper — speeds up the manual step, you still click submit</div>
+  <div class="helper">
+    <p class="helper-note">
+      Not automation: you log in and open the application yourself. This only fills the visible text fields
+      on that page from your clipboard, in one click, instead of pasting into each one by hand. Review before submitting — always.
+    </p>
+
+    <div class="helper-row">
+      <div class="helper-col">
+        <label class="helper-label" for="pitch-box">1. Your pitch (edit per-lead, then copy)</label>
+        <textarea id="pitch-box" class="pitch-box">Tech Lead with 3 years building fraud/AML platforms at national scale — led a 10-engineer team on a ~₹25cr government-sponsored project across 4,500+ branches, flagged ~500 fraudulent accounts, cut alert latency 40%. Built RBAC, a no-code rules engine, and an ML risk-scoring layer from scratch. Portfolio: ashishchauhan.site</textarea>
+        <button class="copy-btn" onclick="navigator.clipboard.writeText(document.getElementById('pitch-box').value).then(()=>{this.textContent='Copied ✓';setTimeout(()=>this.textContent='Copy pitch',1500)})">Copy pitch</button>
+      </div>
+
+      <div class="helper-col">
+        <label class="helper-label">2. Drag this to your bookmarks bar</label>
+        <a class="bookmarklet-btn" href="javascript:(function(){navigator.clipboard.readText().then(function(t){if(!t){alert('Clipboard empty — copy your pitch first.');return;}var n=0;var a=document.activeElement;function fill(f){f.value=t;f.dispatchEvent(new Event('input',{bubbles:true}));f.dispatchEvent(new Event('change',{bubbles:true}));n++;}if(a&&(a.tagName==='TEXTAREA'||(a.tagName==='INPUT'&&/text|search/.test(a.type)))){fill(a);}var re=/cover|pitch|why|message|note|summary|intro|motivat/i;document.querySelectorAll('textarea,input[type=text]').forEach(function(f){if(f===a)return;var hay=(f.name||'')+' '+(f.id||'')+' '+(f.placeholder||'')+' '+(f.getAttribute('aria-label')||'');if(re.test(hay))fill(f);});alert('Filled '+n+' field(s). Review before submitting!');}).catch(function(){alert('Could not read clipboard — copy your pitch (step 1) first, then click this again.');});})();">&#9889; Fill Application</a>
+        <p class="helper-hint">Then: open the job application page, log in yourself, click this bookmark. Works on most sites' cover-letter / "why are you a fit" fields.</p>
+      </div>
+    </div>
   </div>
 
   <div class="configbar">
