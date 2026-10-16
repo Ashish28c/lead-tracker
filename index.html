@@ -1,63 +1,72 @@
 <title>Lead Tracker — Ashish Chauhan</title>
 <style>
   :root {
-    --bg: #f6f4ef;
+    --bg: #f5f8fc;
     --surface: #ffffff;
-    --surface-raised: #fdfcf9;
-    --border: #e2ddd1;
-    --text: #1c1a16;
-    --text-dim: #6b6558;
-    --text-faint: #9b9484;
-    --accent: #c17a1f;
+    --surface-raised: #eef3fa;
+    --border: #dde6f2;
+    --text: #0f1b2d;
+    --text-dim: #51647d;
+    --text-faint: #94a3b8;
+    --accent: #2563eb;
+    --accent-2: #0ea5e9;
     --accent-ink: #ffffff;
-    --accent-soft: #f3e3c8;
-    --good: #2f7a5c;
-    --good-soft: #dcefe3;
-    --pending: #9b6a1f;
-    --pending-soft: #f3e3c8;
+    --accent-soft: #e4edfd;
+    --good: #0f9d58;
+    --good-soft: #e1f7ea;
+    --pending: #c2740a;
+    --pending-soft: #fdf0dc;
     --mono: ui-monospace, "SFMono-Regular", "Consolas", "Liberation Mono", monospace;
-    --sans: -apple-system, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
-    --shadow: 0 1px 2px rgba(28,26,22,0.04), 0 8px 24px rgba(28,26,22,0.06);
+    --sans: "Segoe UI", -apple-system, "Helvetica Neue", Arial, sans-serif;
+    --shadow: 0 1px 2px rgba(15,38,74,0.04), 0 10px 28px rgba(15,38,74,0.07);
+    --shadow-hover: 0 2px 4px rgba(15,38,74,0.06), 0 16px 36px rgba(15,38,74,0.10);
+    --radius: 14px;
+    --radius-sm: 9px;
   }
 
   @media (prefers-color-scheme: dark) {
     :root {
-      --bg: #0e0d0b;
-      --surface: #171511;
-      --surface-raised: #1d1a15;
-      --border: #332d22;
-      --text: #ece7db;
-      --text-dim: #a69d8a;
-      --text-faint: #716a58;
-      --accent: #e0a23e;
-      --accent-ink: #171511;
-      --accent-soft: #332a16;
-      --good: #5cbd93;
-      --good-soft: #1c2d24;
-      --pending: #e0a23e;
-      --pending-soft: #332a16;
-      --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 8px 24px rgba(0,0,0,0.4);
+      --bg: #0a1120;
+      --surface: #111b2e;
+      --surface-raised: #16233a;
+      --border: #22324a;
+      --text: #e7edf7;
+      --text-dim: #93a3bc;
+      --text-faint: #5f7390;
+      --accent: #5b9dfc;
+      --accent-2: #38bdf8;
+      --accent-ink: #061225;
+      --accent-soft: #15294a;
+      --good: #3ddc8e;
+      --good-soft: #0f2c22;
+      --pending: #f5b347;
+      --pending-soft: #3a2a0f;
+      --shadow: 0 1px 2px rgba(0,0,0,0.35), 0 10px 28px rgba(0,0,0,0.45);
+      --shadow-hover: 0 2px 4px rgba(0,0,0,0.4), 0 16px 36px rgba(0,0,0,0.55);
     }
   }
   :root[data-theme="dark"] {
-    --bg: #0e0d0b; --surface: #171511; --surface-raised: #1d1a15; --border: #332d22;
-    --text: #ece7db; --text-dim: #a69d8a; --text-faint: #716a58;
-    --accent: #e0a23e; --accent-ink: #171511; --accent-soft: #332a16;
-    --good: #5cbd93; --good-soft: #1c2d24; --pending: #e0a23e; --pending-soft: #332a16;
-    --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 8px 24px rgba(0,0,0,0.4);
+    --bg: #0a1120; --surface: #111b2e; --surface-raised: #16233a; --border: #22324a;
+    --text: #e7edf7; --text-dim: #93a3bc; --text-faint: #5f7390;
+    --accent: #5b9dfc; --accent-2: #38bdf8; --accent-ink: #061225; --accent-soft: #15294a;
+    --good: #3ddc8e; --good-soft: #0f2c22; --pending: #f5b347; --pending-soft: #3a2a0f;
+    --shadow: 0 1px 2px rgba(0,0,0,0.35), 0 10px 28px rgba(0,0,0,0.45);
+    --shadow-hover: 0 2px 4px rgba(0,0,0,0.4), 0 16px 36px rgba(0,0,0,0.55);
   }
   :root[data-theme="light"] {
-    --bg: #f6f4ef; --surface: #ffffff; --surface-raised: #fdfcf9; --border: #e2ddd1;
-    --text: #1c1a16; --text-dim: #6b6558; --text-faint: #9b9484;
-    --accent: #c17a1f; --accent-ink: #ffffff; --accent-soft: #f3e3c8;
-    --good: #2f7a5c; --good-soft: #dcefe3; --pending: #9b6a1f; --pending-soft: #f3e3c8;
-    --shadow: 0 1px 2px rgba(28,26,22,0.04), 0 8px 24px rgba(28,26,22,0.06);
+    --bg: #f5f8fc; --surface: #ffffff; --surface-raised: #eef3fa; --border: #dde6f2;
+    --text: #0f1b2d; --text-dim: #51647d; --text-faint: #94a3b8;
+    --accent: #2563eb; --accent-2: #0ea5e9; --accent-ink: #ffffff; --accent-soft: #e4edfd;
+    --good: #0f9d58; --good-soft: #e1f7ea; --pending: #c2740a; --pending-soft: #fdf0dc;
+    --shadow: 0 1px 2px rgba(15,38,74,0.04), 0 10px 28px rgba(15,38,74,0.07);
+    --shadow-hover: 0 2px 4px rgba(15,38,74,0.06), 0 16px 36px rgba(15,38,74,0.10);
   }
 
   * { box-sizing: border-box; }
   html, body { margin: 0; padding: 0; }
   body {
     background: var(--bg);
+    background-image: radial-gradient(1200px 400px at 20% -10%, color-mix(in srgb, var(--accent) 7%, transparent), transparent);
     color: var(--text);
     font-family: var(--sans);
     line-height: 1.5;
@@ -95,10 +104,14 @@
   }
   h1 {
     margin: 0;
-    font-size: 28px;
-    font-weight: 700;
-    letter-spacing: -0.01em;
+    font-size: 30px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
     text-wrap: balance;
+    background: linear-gradient(100deg, var(--text) 35%, var(--accent) 115%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
   }
   .masthead-sub {
     color: var(--text-dim);
@@ -126,14 +139,17 @@
     margin-top: 8px;
     font-family: var(--mono);
     font-size: 11.5px;
+    font-weight: 600;
     color: var(--accent-ink);
-    background: var(--accent);
-    padding: 6px 12px;
-    border-radius: 7px;
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    padding: 7px 14px;
+    border-radius: 8px;
     text-decoration: none;
     letter-spacing: 0.02em;
+    box-shadow: 0 4px 14px color-mix(in srgb, var(--accent) 35%, transparent);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
   }
-  .run-now-btn:hover { opacity: 0.85; }
+  .run-now-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 18px color-mix(in srgb, var(--accent) 45%, transparent); }
 
   /* ---- Stat row ---- */
   .stats {
@@ -142,17 +158,20 @@
     gap: 1px;
     background: var(--border);
     border: 1px solid var(--border);
-    border-radius: 10px;
+    border-radius: var(--radius);
     overflow: hidden;
     margin-bottom: 32px;
+    box-shadow: var(--shadow);
   }
   .stat {
     background: var(--surface);
-    padding: 16px 18px;
+    padding: 18px 20px;
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 7px;
+    transition: background 0.15s ease;
   }
+  .stat:hover { background: var(--surface-raised); }
   .stat .k {
     font-size: 11px;
     text-transform: uppercase;
@@ -184,13 +203,15 @@
   .channel {
     background: var(--surface);
     border: 1px solid var(--border);
-    border-radius: 10px;
+    border-radius: var(--radius-sm);
     padding: 14px 16px;
     display: flex;
     align-items: center;
     gap: 12px;
     box-shadow: var(--shadow);
+    transition: box-shadow 0.15s ease, transform 0.15s ease;
   }
+  .channel:hover { box-shadow: var(--shadow-hover); transform: translateY(-1px); }
   .dot {
     width: 8px; height: 8px; border-radius: 50%;
     flex-shrink: 0;
@@ -219,9 +240,9 @@
   .pipeline {
     background: var(--surface);
     border: 1px solid var(--border);
-    border-radius: 12px;
+    border-radius: var(--radius);
     box-shadow: var(--shadow);
-    padding: 24px 24px 8px;
+    padding: 26px 26px 8px;
     margin-bottom: 36px;
   }
   .pstep {
@@ -272,7 +293,7 @@
     margin-top: 8px;
   }
   .branch-card {
-    border-radius: 8px;
+    border-radius: var(--radius-sm);
     padding: 10px 12px;
     border: 1px solid var(--border);
   }
@@ -295,10 +316,12 @@
   .entry {
     background: var(--surface);
     border: 1px solid var(--border);
-    border-radius: 12px;
+    border-radius: var(--radius);
     box-shadow: var(--shadow);
     overflow: hidden;
+    transition: box-shadow 0.15s ease;
   }
+  .entry:hover { box-shadow: var(--shadow-hover); }
   .entry > summary {
     list-style: none;
     cursor: pointer;
@@ -368,9 +391,11 @@
   .lead-item {
     background: var(--surface-raised);
     border: 1px solid var(--border);
-    border-radius: 9px;
-    padding: 12px 14px;
+    border-radius: var(--radius-sm);
+    padding: 13px 15px;
+    transition: border-color 0.15s ease;
   }
+  .lead-item:hover { border-color: color-mix(in srgb, var(--accent) 40%, var(--border)); }
   .lead-top {
     display: flex;
     justify-content: space-between;
