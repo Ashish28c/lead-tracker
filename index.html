@@ -299,20 +299,39 @@
     box-shadow: var(--shadow);
     overflow: hidden;
   }
+  .entry > summary {
+    list-style: none;
+    cursor: pointer;
+  }
+  .entry > summary::-webkit-details-marker { display: none; }
   .entry-head {
     padding: 16px 20px;
     display: flex;
     align-items: center;
     gap: 14px;
   }
+  .entry-chevron {
+    font-family: var(--mono);
+    color: var(--text-faint);
+    font-size: 12px;
+    transition: transform 0.15s ease;
+    flex-shrink: 0;
+  }
+  .entry[open] .entry-chevron { transform: rotate(90deg); }
   .entry-date {
     font-family: var(--mono);
     font-size: 13px;
     color: var(--text-dim);
     font-variant-numeric: tabular-nums;
-    min-width: 92px;
+    min-width: 76px;
   }
-  .entry-title { font-weight: 600; font-size: 14.5px; flex: 1; }
+  .entry-title { font-weight: 600; font-size: 14.5px; }
+  .entry-counts {
+    display: flex;
+    gap: 6px;
+    margin-left: auto;
+    flex-wrap: wrap;
+  }
   .pill {
     font-size: 11px;
     font-family: var(--mono);
@@ -320,9 +339,68 @@
     border-radius: 999px;
     text-transform: uppercase;
     letter-spacing: 0.04em;
+    white-space: nowrap;
   }
   .pill.waiting { background: var(--pending-soft); color: var(--pending); }
   .pill.done { background: var(--good-soft); color: var(--good); }
+  .pill.neutral { background: var(--surface-raised); color: var(--text-dim); border: 1px solid var(--border); }
+
+  .entry-body {
+    padding: 0 20px 20px;
+    border-top: 1px solid var(--border);
+  }
+  .track-group { margin-top: 18px; }
+  .track-title {
+    font-family: var(--mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-faint);
+    margin-bottom: 10px;
+  }
+  .track-empty {
+    font-size: 13px;
+    color: var(--text-dim);
+    font-style: italic;
+    padding: 4px 0 2px;
+  }
+  .lead-list { display: flex; flex-direction: column; gap: 10px; }
+  .lead-item {
+    background: var(--surface-raised);
+    border: 1px solid var(--border);
+    border-radius: 9px;
+    padding: 12px 14px;
+  }
+  .lead-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 4px;
+  }
+  .lead-role { font-weight: 600; font-size: 13.5px; }
+  .lead-company { color: var(--text-dim); font-size: 12.5px; margin-top: 1px; }
+  .lead-why { font-size: 12.5px; color: var(--text-dim); line-height: 1.5; margin-top: 6px; }
+  .lead-link {
+    display: inline-block;
+    margin-top: 7px;
+    font-family: var(--mono);
+    font-size: 11.5px;
+    color: var(--accent);
+    text-decoration: none;
+    border-bottom: 1px solid var(--accent-soft);
+  }
+  .lead-link:hover { opacity: 0.8; }
+  .status-tag {
+    font-size: 10.5px;
+    font-family: var(--mono);
+    padding: 2px 7px;
+    border-radius: 999px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .status-tag.manual { background: var(--pending-soft); color: var(--pending); }
+  .status-tag.auto { background: var(--good-soft); color: var(--good); }
 
   .empty-state {
     text-align: center;
@@ -391,7 +469,7 @@
     </div>
     <div class="next-run">
       <div class="label">Next run</div>
-      <div class="value" id="next-run-value">Today, 08:00 IST</div>
+      <div class="value" id="next-run-value">Tomorrow, 08:00 IST</div>
       <a class="run-now-btn" href="https://claude.ai/code/routines/trig_01KK2TTZcuWmknrK5XaDmTAa" target="_blank" rel="noopener">Run now &rarr;</a>
     </div>
   </header>
@@ -399,19 +477,19 @@
   <div class="stats">
     <div class="stat">
       <span class="k">Digests run</span>
-      <span class="v" id="stat-runs">0</span>
+      <span class="v" id="stat-runs">2</span>
     </div>
     <div class="stat">
       <span class="k">Leads this week</span>
-      <span class="v accent" id="stat-leads">0</span>
+      <span class="v accent" id="stat-leads">21</span>
+    </div>
+    <div class="stat">
+      <span class="k">Auto-sent</span>
+      <span class="v" style="font-size:16px; color: var(--text-dim);">0 of 21</span>
     </div>
     <div class="stat">
       <span class="k">Schedule</span>
       <span class="v" style="font-size:16px;">8:00 AM daily</span>
-    </div>
-    <div class="stat">
-      <span class="k">Outreach</span>
-      <span class="v" style="font-size:16px; color: var(--pending);">Auto-send — live</span>
     </div>
   </div>
 
@@ -494,18 +572,188 @@
 
   <div class="section-label">Digest history</div>
   <div class="log" id="log">
-    <div class="entry">
-      <div class="empty-state">
-        <div class="icon">&#128203;</div>
-        <div class="headline">No digests yet</div>
-        <div class="detail">
-          The routine hasn't fired for the first time yet. Its first run lands today at 8:00 AM IST —
-          a Claude Doc titled "Job &amp; Freelance Leads — &lt;date&gt;", a summary email to your inbox,
-          and auto-sent outreach for any lead with a listed contact email. This page is the shell for
-          tracking that history going forward.
+
+    <details class="entry" open>
+      <summary>
+        <div class="entry-head">
+          <span class="entry-chevron">&#9656;</span>
+          <span class="entry-date">Oct 16</span>
+          <span class="entry-title">14 leads found</span>
+          <div class="entry-counts">
+            <span class="pill neutral">5 India</span>
+            <span class="pill neutral">4 Intl/Remote</span>
+            <span class="pill neutral">5 Freelance</span>
+            <span class="pill waiting">0 auto-sent</span>
+          </div>
         </div>
+      </summary>
+      <div class="entry-body">
+
+        <div class="track-group">
+          <div class="track-title">India</div>
+          <div class="lead-list">
+            <div class="lead-item">
+              <div class="lead-top"><div><div class="lead-role">Technical Lead — Product Development</div><div class="lead-company">Clari5 (CustomerXPs/Perfios)</div></div><span class="status-tag manual">manual</span></div>
+              <div class="lead-why">Real-time fraud-prevention platform protecting 1B+ accounts globally — near 1:1 domain match to EWS/FAME.</div>
+              <a class="lead-link" href="https://www.clari5.com/careers/technical-lead/" target="_blank" rel="noopener">View posting &rarr;</a>
+            </div>
+            <div class="lead-item">
+              <div class="lead-top"><div><div class="lead-role">Senior Software Backend Engineer</div><div class="lead-company">Sardine</div></div><span class="status-tag manual">manual</span></div>
+              <div class="lead-why">Pure-play fraud/AML risk-decisioning product company, remote-from-India, ~₹30-50L/yr.</div>
+              <a class="lead-link" href="https://jobs.dcg.co/companies/sardine/jobs/78390312-software-backend-engineer" target="_blank" rel="noopener">View posting &rarr;</a>
+            </div>
+            <div class="lead-item">
+              <div class="lead-top"><div><div class="lead-role">Technical Lead (AML/CFT &amp; Fraud Detection)</div><div class="lead-company">IntelleWings</div></div><span class="status-tag manual">manual</span></div>
+              <div class="lead-why">Direct AML/CFT SaaS product company — but on-site Chandigarh, not remote/Ahmedabad.</div>
+              <a class="lead-link" href="https://jobs.weekday.works/wkdy8c53pu" target="_blank" rel="noopener">View posting &rarr;</a>
+            </div>
+            <div class="lead-item">
+              <div class="lead-top"><div><div class="lead-role">AML Platform Architect — Java</div><div class="lead-company">BNP Paribas</div></div><span class="status-tag manual">manual</span></div>
+              <div class="lead-why">Bank-internal AML platform rebuild to cloud-native architecture; may be stale (last updated Jan 2026) — verify before applying.</div>
+              <a class="lead-link" href="https://group.bnpparibas/en/careers/job-offer/aml-platform-architect-java" target="_blank" rel="noopener">View posting &rarr;</a>
+            </div>
+            <div class="lead-item">
+              <div class="lead-top"><div><div class="lead-role">Senior Software Engineer (Java/Spring Boot, BFSI)</div><div class="lead-company">Jocata — via Softomatic staffing</div></div><span class="status-tag manual">manual</span></div>
+              <div class="lead-why">Genuine BFSI/lending/AML product company but staffing-agency-mediated and below Lead level — treat as backup.</div>
+              <a class="lead-link" href="https://www.hirist.tech/j/senior-software-engineer-java-spring-boot-1645324" target="_blank" rel="noopener">View posting &rarr;</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="track-group">
+          <div class="track-title">International / Remote</div>
+          <div class="lead-list">
+            <div class="lead-item">
+              <div class="lead-top"><div><div class="lead-role">Tech Lead (Backend): Fraud</div><div class="lead-company">BVNK</div></div><span class="status-tag manual">manual</span></div>
+              <div class="lead-why">Crypto/stablecoin payments co with a dedicated Fraud engineering domain; remote (South Africa/Bulgaria/Spain/Poland). Asks 7+ yrs vs your 3 — domain/scope match is strong.</div>
+              <a class="lead-link" href="https://job-boards.greenhouse.io/bvnk/jobs/4880816101" target="_blank" rel="noopener">View posting &rarr;</a>
+            </div>
+            <div class="lead-item">
+              <div class="lead-top"><div><div class="lead-role">Senior Java Software Engineer — Featurespace</div><div class="lead-company">Visa</div></div><span class="status-tag manual">manual</span></div>
+              <div class="lead-why">Featurespace's ARIC platform is a real-time fraud/AML engine directly parallel to your rules+ML risk-scoring work. Cambridge, UK.</div>
+              <a class="lead-link" href="https://www.smartrecruiters.com/Visa/744000073811027" target="_blank" rel="noopener">View posting &rarr;</a>
+            </div>
+            <div class="lead-item">
+              <div class="lead-top"><div><div class="lead-role">Backend Tech Lead — ThetaRay (AML SaaS "SONAR")</div></div><span class="status-tag manual">manual</span></div>
+              <div class="lead-why">Directly AML-domain Tech Lead role, but wants 8+ years and is based in Israel.</div>
+              <a class="lead-link" href="https://builtin.com/job/backend-tech-lead/6921458" target="_blank" rel="noopener">View posting &rarr;</a>
+            </div>
+            <div class="lead-item">
+              <div class="lead-top"><div><div class="lead-role">Senior Java Software Engineer, Data Enrichment</div><div class="lead-company">SEON Technologies</div></div><span class="status-tag manual">manual</span></div>
+              <div class="lead-why">Fraud/AML product company wanting exactly 3-5 years Java — best experience-level match found, but Budapest hybrid, no confirmed remote/visa support.</div>
+              <a class="lead-link" href="https://dreamjobs.hu/en/job/seon-technologies/data-enrichment-engineer" target="_blank" rel="noopener">View posting &rarr;</a>
+            </div>
+          </div>
+          <div class="track-empty">UAE and Singapore specifically came up thin-to-empty for genuine roles with visa sponsorship this run.</div>
+        </div>
+
+        <div class="track-group">
+          <div class="track-title">Freelance</div>
+          <div class="lead-list">
+            <div class="lead-item">
+              <div class="lead-top"><div><div class="lead-role">Risk/AML/Fraud system for crypto-acquiring (real-time)</div></div><span class="status-tag manual">manual</span></div>
+              <div class="lead-why">Near-exact architectural match to EWS+FAME applied to crypto-acquiring; ~$10,935 budget.</div>
+              <a class="lead-link" href="https://freelancehunt.com/en/project/risk-aml-fraud-sistema/1589309.html" target="_blank" rel="noopener">View posting &rarr;</a>
+            </div>
+            <div class="lead-item">
+              <div class="lead-top"><div><div class="lead-role">Senior Full-Stack Software Engineer — FinTech/MCA Platforms</div></div><span class="status-tag manual">manual</span></div>
+              <div class="lead-why">Lending/MCA platform needing the same underwriting rigor as your ECL suite.</div>
+              <a class="lead-link" href="https://www.upwork.com/freelance-jobs/apply/Senior-Full-Stack-Software-Engineer-FinTech-MCA-Platforms_~022055028235216633421/" target="_blank" rel="noopener">View posting &rarr;</a>
+            </div>
+            <div class="lead-item">
+              <div class="lead-top"><div><div class="lead-role">Java Developer — Spring Boot, JPA, Angular</div></div><span class="status-tag manual">manual</span></div>
+              <div class="lead-why">Direct stack match to your daily EWS/FAME tooling.</div>
+              <a class="lead-link" href="https://www.upwork.com/freelance-jobs/apply/Java-Developer-Spring-Boot-project-Spring-framework-JPA-Angular_~022051747722916395116/" target="_blank" rel="noopener">View posting &rarr;</a>
+            </div>
+            <div class="lead-item">
+              <div class="lead-top"><div><div class="lead-role">Senior Full Stack Developer — Java/Spring Boot/React SaaS</div></div><span class="status-tag manual">manual</span></div>
+              <div class="lead-why">Core Java/Spring Boot match, contract-to-hire structure.</div>
+              <a class="lead-link" href="https://www.upwork.com/jobs/~022069447283722104172" target="_blank" rel="noopener">View posting &rarr;</a>
+            </div>
+            <div class="lead-item">
+              <div class="lead-top"><div><div class="lead-role">AML Avaloq Developer</div><div class="lead-company">Zurich</div></div><span class="status-tag manual">manual</span></div>
+              <div class="lead-why">AML domain overlap but no Avaloq experience — low confidence, possibly stale, verify before investing effort.</div>
+              <a class="lead-link" href="https://www.freelancermap.ch/projektboerse/projekte/it/613049-projekt-aml-avaloq-developer-zuerich.html" target="_blank" rel="noopener">View posting &rarr;</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="track-empty" style="margin-top:14px;">Full writeups + drafted outreach notes: <a class="lead-link" href="https://claude.ai/artifact/3SfD3YN3xAwzpKevZ18p8i" target="_blank" rel="noopener" style="margin-top:0;">open the Claude Doc &rarr;</a></div>
       </div>
-    </div>
+    </details>
+
+    <details class="entry">
+      <summary>
+        <div class="entry-head">
+          <span class="entry-chevron">&#9656;</span>
+          <span class="entry-date">Oct 15</span>
+          <span class="entry-title">7 leads found</span>
+          <div class="entry-counts">
+            <span class="pill neutral">3 India</span>
+            <span class="pill neutral">4 Intl/Remote</span>
+            <span class="pill neutral">0 Freelance</span>
+            <span class="pill waiting">0 auto-sent</span>
+          </div>
+        </div>
+      </summary>
+      <div class="entry-body">
+
+        <div class="track-group">
+          <div class="track-title">India</div>
+          <div class="lead-list">
+            <div class="lead-item">
+              <div class="lead-top"><div><div class="lead-role">Technical Lead — AML/CFT &amp; Fraud Detection Platform</div><div class="lead-company">IntelleWings (Chandigarh, on-site)</div></div><span class="status-tag manual">manual</span></div>
+              <div class="lead-why">Leads design/delivery of an AML/CFT and fraud-detection platform for banks, hands-on required — near-exact mirror of your EWS+FAME work.</div>
+              <a class="lead-link" href="https://jobs.weekday.works/wkdy8c53pu" target="_blank" rel="noopener">View posting &rarr;</a>
+            </div>
+            <div class="lead-item">
+              <div class="lead-top"><div><div class="lead-role">Technical Lead — AML &amp; Fraud Prevention Platform</div><div class="lead-company">Mindrops (Delhi/Ghaziabad, hybrid)</div></div><span class="status-tag manual">manual</span></div>
+              <div class="lead-why">Leads an ML + backend team owning a detection engine; asks 5-8 yrs (stretch vs. your 3, but domain depth should compensate).</div>
+              <a class="lead-link" href="https://nodeflair.com/jobs/mindrops-technical-lead-aml-fraud-prevention-platform-528420" target="_blank" rel="noopener">View posting &rarr;</a>
+            </div>
+            <div class="lead-item">
+              <div class="lead-top"><div><div class="lead-role">Senior Backend Engineer</div><div class="lead-company">Sardine (remote, ~₹30-50L/yr)</div></div><span class="status-tag manual">manual</span></div>
+              <div class="lead-why">Pure-play fraud/AML RegTech platform used by 300+ banks/fintechs — exact sector match; stack leans Go but Java/distributed-systems background transfers.</div>
+              <a class="lead-link" href="https://builtinhyderabad.in/job/software-backend-engineer/9313219" target="_blank" rel="noopener">View posting &rarr;</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="track-group">
+          <div class="track-title">International / Remote</div>
+          <div class="lead-list">
+            <div class="lead-item">
+              <div class="lead-top"><div><div class="lead-role">Tech Lead (Backend): Fraud</div><div class="lead-company">BVNK (South Africa/Bulgaria/Spain/Poland)</div></div><span class="status-tag manual">manual</span></div>
+              <div class="lead-why">Exact "Tech Lead" title on a fraud function, Java/Kotlin + Spring Boot stack. Verify India remote eligibility before applying.</div>
+              <a class="lead-link" href="https://job-boards.greenhouse.io/bvnk/jobs/4880816101" target="_blank" rel="noopener">View posting &rarr;</a>
+            </div>
+            <div class="lead-item">
+              <div class="lead-top"><div><div class="lead-role">Senior Backend Engineer — Fraud</div><div class="lead-company">SHIELD (Singapore)</div></div><span class="status-tag manual">manual</span></div>
+              <div class="lead-why">Dedicated fraud-intelligence product company in your target market (Singapore); stack leans Go/MySQL/MongoDB.</div>
+              <a class="lead-link" href="https://builtin.com/job/senior-backend-engineer-fraud/3444627" target="_blank" rel="noopener">View posting &rarr;</a>
+            </div>
+            <div class="lead-item">
+              <div class="lead-top"><div><div class="lead-role">Founding Backend Engineer</div><div class="lead-company">Remo (Dubai, hybrid, $100-124K)</div></div><span class="status-tag manual">manual</span></div>
+              <div class="lead-why">UAE-based AI compliance tooling for banks/fintechs; founding-engineer scope rewards your from-scratch builds (RBAC, rule builder, UDIP). Early-stage startup — diligence stability first.</div>
+              <a class="lead-link" href="https://www.jointaro.com/jobs/remo/founding-backend-engineer" target="_blank" rel="noopener">View posting &rarr;</a>
+            </div>
+            <div class="lead-item">
+              <div class="lead-top"><div><div class="lead-role">Senior Java Developer (AML)</div><div class="lead-company">Silent Eight (remote)</div></div><span class="status-tag manual">manual</span></div>
+              <div class="lead-why">Closest stack match of the international leads — Java, Spring Boot, PostgreSQL — at a pure AML-compliance product company.</div>
+              <a class="lead-link" href="https://justjoin.it/offers/silent-eight-pte-ltd-remote-senior-java-developer" target="_blank" rel="noopener">View posting &rarr;</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="track-group">
+          <div class="track-title">Freelance</div>
+          <div class="track-empty">No genuine new gigs found — Upwork/Fiverr/Toptal/Contra sit behind in-platform search that general web search doesn't index. Recommended checking Upwork's "Fintech Development" category and applying to Toptal's backend/fintech talent pool directly.</div>
+        </div>
+
+        <div class="track-empty" style="margin-top:14px;">Full writeups + drafted outreach notes: <a class="lead-link" href="https://claude.ai/artifact/c5ea2249-c224-4aa7-9cc4-7fb48aac5387" target="_blank" rel="noopener" style="margin-top:0;">open the Claude Doc &rarr;</a></div>
+      </div>
+    </details>
+
   </div>
 
   <div class="configbar">
